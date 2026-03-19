@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <stdbool.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
@@ -14,11 +13,9 @@
 // LED
 #define LED_PIN         25
  
-// MIDI message types (upper nibble of status byte)
+// MIDI message types
 #define MIDI_NOTE_OFF           0x80
 #define MIDI_NOTE_ON            0x90
-
-// eventually?
 #define MIDI_POLY_PRESSURE      0xA0
 #define MIDI_CONTROL_CHANGE     0xB0
 #define MIDI_PROGRAM_CHANGE     0xC0
@@ -27,9 +24,9 @@
  
 // MIDI structure
 typedef struct {
-    uint8_t status;         // Raw status byte
-    uint8_t message_type;   // Upper nibble (message type)
-    uint8_t channel;        // Lower nibble + 1 (1-16)
+    uint8_t status;
+    uint8_t message_type;
+    uint8_t channel;
     uint8_t data1;
     uint8_t data2;
 } midi_message_t;
@@ -60,38 +57,41 @@ static void midi_display_message(const midi_message_t *msg) {
         case MIDI_NOTE_ON: {
             char note_name[8];
             midi_note_to_name(msg->data1, note_name);
-            const char *type = (msg->message_type == MIDI_NOTE_ON) ? "ON " : "OFF";
-            printf("Packet: 0x%02X 0x%02X 0x%02X | %s | %s | Vel: %3d\n",
-                   msg->status, msg->data1, msg->data2,
-                   note_name, type, msg->data2);
+            printf("NOTE %-3s | Ch: %2d | %s | Vel: %3d | Raw: 0x%02X 0x%02X 0x%02X\n",
+                   (msg->message_type == MIDI_NOTE_ON) ? "ON" : "OFF",
+                   msg->channel, note_name, msg->data2,
+                   msg->status, msg->data1, msg->data2);
             break;
         }
-
-        // Eventually ?
         case MIDI_POLY_PRESSURE:
-            printf("POLY PRES - Ch: %2d | Note: %3d | Pres: %3d\n",
-                   msg->channel, msg->data1, msg->data2);
+            printf("POLY PRES  | Ch: %2d | Note: %3d | Pres: %3d | Raw: 0x%02X 0x%02X 0x%02X\n",
+                   msg->channel, msg->data1, msg->data2,
+                   msg->status, msg->data1, msg->data2);
             break;
         case MIDI_CONTROL_CHANGE:
-            printf("CC        - Ch: %2d | CC:   %3d | Val: %3d\n",
-                   msg->channel, msg->data1, msg->data2);
+            printf("CC         | Ch: %2d | CC:   %3d | Val:  %3d | Raw: 0x%02X 0x%02X 0x%02X\n",
+                   msg->channel, msg->data1, msg->data2,
+                   msg->status, msg->data1, msg->data2);
             break;
         case MIDI_PROGRAM_CHANGE:
-            printf("PROG CHG  - Ch: %2d | Prog: %3d\n",
-                   msg->channel, msg->data1);
+            printf("PROG CHG   | Ch: %2d | Prog: %3d |             Raw: 0x%02X 0x%02X\n",
+                   msg->channel, msg->data1,
+                   msg->status, msg->data1);
             break;
         case MIDI_CHANNEL_PRESSURE:
-            printf("CHAN PRES  - Ch: %2d | Pres: %3d\n",
-                   msg->channel, msg->data1);
+            printf("CHAN PRES  | Ch: %2d | Pres: %3d |             Raw: 0x%02X 0x%02X\n",
+                   msg->channel, msg->data1,
+                   msg->status, msg->data1);
             break;
         case MIDI_PITCH_BEND: {
             int16_t bend = (int16_t)((msg->data2 << 7) | msg->data1) - 8192;
-            printf("PITCH BEND - Ch: %2d | Val: %6d\n",
-                   msg->channel, bend);
+            printf("PITCH BEND | Ch: %2d | Val: %6d |   Raw: 0x%02X 0x%02X 0x%02X\n",
+                   msg->channel, bend,
+                   msg->status, msg->data1, msg->data2);
             break;
         }
         default:
-            printf("UNKNOWN   - Status: 0x%02X\n", msg->status);
+            printf("UNKNOWN    | Status: 0x%02X\n", msg->status);
             break;
     }
 }
@@ -111,7 +111,6 @@ int main() {
     uart_init(MIDI_UART_ID, MIDI_BAUD_RATE);
     gpio_set_function(MIDI_RX_PIN, GPIO_FUNC_UART);
     gpio_set_function(MIDI_TX_PIN, GPIO_FUNC_UART);
-    gpio_pull_down(MIDI_RX_PIN);
     uart_set_format(MIDI_UART_ID, 8, 1, UART_PARITY_NONE);
     uart_set_hw_flow(MIDI_UART_ID, false, false);
  
@@ -128,10 +127,10 @@ int main() {
 
         uint8_t byte = uart_getc(MIDI_UART_ID);
         
-        // Blink LED on RX (debug)
-        gpio_put(LED_PIN, 1);
-        sleep_us(1000);
-        gpio_put(LED_PIN, 0);
+        // // Blink LED on RX (for debug)
+        // gpio_put(LED_PIN, 1);
+        // sleep_us(1000);
+        // gpio_put(LED_PIN, 0);
 
         if (byte & 0x80) {
             // Status byte — start of a new message
