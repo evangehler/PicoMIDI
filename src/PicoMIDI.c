@@ -5,9 +5,7 @@
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
  
-// UART defines for MIDI IN (DIN)
-// uart0 is reserved for stdio (USB console output)
-// uart1 is used for MIDI input at 31250 baud (MIDI standard)
+// UART defines for MIDI IN
 #define MIDI_UART_ID    uart0
 #define MIDI_BAUD_RATE  31250
 #define MIDI_RX_PIN     13
@@ -19,13 +17,15 @@
 // MIDI message types (upper nibble of status byte)
 #define MIDI_NOTE_OFF           0x80
 #define MIDI_NOTE_ON            0x90
+
+// eventually?
 #define MIDI_POLY_PRESSURE      0xA0
 #define MIDI_CONTROL_CHANGE     0xB0
 #define MIDI_PROGRAM_CHANGE     0xC0
 #define MIDI_CHANNEL_PRESSURE   0xD0
 #define MIDI_PITCH_BEND         0xE0
  
-// MIDI message structure
+// MIDI structure
 typedef struct {
     uint8_t status;         // Raw status byte
     uint8_t message_type;   // Upper nibble (message type)
@@ -45,7 +45,7 @@ static uint8_t midi_data_bytes_expected(uint8_t msg_type) {
     }
 }
  
-// Convert MIDI note number to note name (e.g., 60 = "C4")
+// Convert MIDI note number to note name
 static void midi_note_to_name(uint8_t note, char *buf) {
     const char *notes[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     int octave = (note / 12) - 1;
@@ -66,6 +66,8 @@ static void midi_display_message(const midi_message_t *msg) {
                    note_name, type, msg->data2);
             break;
         }
+
+        // Eventually ?
         case MIDI_POLY_PRESSURE:
             printf("POLY PRES - Ch: %2d | Note: %3d | Pres: %3d\n",
                    msg->channel, msg->data1, msg->data2);
@@ -95,13 +97,17 @@ static void midi_display_message(const midi_message_t *msg) {
 }
  
 int main() {
+
+    // Init Business
     stdio_init_all();
     sleep_ms(2000);
  
+    // LED Debug
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
     gpio_put(LED_PIN, 0);
  
+    // UART Business
     uart_init(MIDI_UART_ID, MIDI_BAUD_RATE);
     gpio_set_function(MIDI_RX_PIN, GPIO_FUNC_UART);
     gpio_set_function(MIDI_TX_PIN, GPIO_FUNC_UART);
@@ -122,9 +128,9 @@ int main() {
 
         uint8_t byte = uart_getc(MIDI_UART_ID);
         
-        // Blink LED on RX
+        // Blink LED on RX (debug)
         gpio_put(LED_PIN, 1);
-        sleep_us(100);
+        sleep_us(1000);
         gpio_put(LED_PIN, 0);
 
         if (byte & 0x80) {
@@ -146,7 +152,7 @@ int main() {
                 bytes_received = 2;
             }
  
-            // If we have all the data bytes, display and reset for running status
+            // If all data bytes, display and reset for running status
             if (bytes_received >= bytes_needed && bytes_needed > 0) {
                 midi_display_message(&midi_msg);
                 bytes_received = 0;  // Ready for running status data bytes
