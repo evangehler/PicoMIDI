@@ -2836,6 +2836,16 @@
 	)
 	(wire
 		(pts
+			(xy 149.86 86.36) (xy 161.29 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "13427f03-68e1-4db4-bb51-f6cf8fd8e694")
+	)
+	(wire
+		(pts
 			(xy 99.06 36.83) (xy 92.71 36.83)
 		)
 		(stroke
@@ -3074,6 +3084,16 @@
 	)
 	(wire
 		(pts
+			(xy 146.05 83.82) (xy 161.29 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "707d31b0-dce6-4c10-8544-ffab771885a8")
+	)
+	(wire
+		(pts
 			(xy 55.88 54.61) (xy 55.88 48.26)
 		)
 		(stroke
@@ -3137,6 +3157,16 @@
 	)
 	(wire
 		(pts
+			(xy 147.32 87.63) (xy 149.86 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "991d11ae-60b5-4104-9eeb-4e2471d8a653")
+	)
+	(wire
+		(pts
 			(xy 54.61 90.17) (xy 59.69 90.17)
 		)
 		(stroke
@@ -3186,6 +3216,16 @@
 			(color 132 0 132 1)
 		)
 		(uuid "b90920d7-e8fd-476b-92fe-621ae4a7adaf")
+	)
+	(wire
+		(pts
+			(xy 149.86 87.63) (xy 149.86 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c6821272-0369-49f2-af33-4689909e2c7f")
 	)
 	(wire
 		(pts
@@ -3334,6 +3374,28 @@
 		)
 	)
 	(global_label "MIDI_IN"
+		(shape input)
+		(at 146.05 83.82 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "48e21050-121d-492a-81f5-ed17677b65c9")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 136.2309 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "MIDI_IN"
 		(shape output)
 		(at 130.81 45.72 0)
 		(fields_autoplaced yes)
@@ -3351,6 +3413,28 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "MIDI_OUT"
+		(shape output)
+		(at 147.32 87.63 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8bd78af4-ff1e-4d71-a8c4-5694d981131c")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.8076 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 				(hide yes)
 			)
 		)
@@ -3442,7 +3526,7 @@
 	)
 	(symbol
 		(lib_id "MCU_RaspberryPi:RP2040")
-		(at 227.33 86.36 0)
+		(at 186.69 91.44 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3451,7 +3535,7 @@
 		(dnp no)
 		(uuid "27684779-966d-4dfc-abdb-f02f1a5392df")
 		(property "Reference" "U1"
-			(at 225.1867 130.81 0)
+			(at 184.5467 135.89 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3460,7 +3544,7 @@
 			)
 		)
 		(property "Value" "RP2040"
-			(at 225.1867 133.35 0)
+			(at 184.5467 138.43 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3469,7 +3553,7 @@
 			)
 		)
 		(property "Footprint" "Package_DFN_QFN:QFN-56-1EP_7x7mm_P0.4mm_EP3.2x3.2mm"
-			(at 227.33 86.36 0)
+			(at 186.69 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3478,7 +3562,7 @@
 			)
 		)
 		(property "Datasheet" "https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf"
-			(at 227.33 86.36 0)
+			(at 186.69 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3487,7 +3571,7 @@
 			)
 		)
 		(property "Description" "A microcontroller by Raspberry Pi"
-			(at 227.33 86.36 0)
+			(at 186.69 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
